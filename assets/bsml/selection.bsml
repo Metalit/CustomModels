@@ -17,4 +17,13 @@
         </horizontal>
         <list id="modelList" select-cell="modelSelected" stick-scrolling="true" show-scrollbar="true" />
     </vertical>
+    <modal id="confirmModal" size-delta-x="70" size-delta-y="20" click-off-closes="true">
+        <vertical child-align="MiddleCenter" child-expand-width="false" child-control-height="false">
+            <text text="Are you sure you would like to delete this model?" size-delta-y="2"/>
+            <horizontal spacing="2">
+                <button text="Cancel" on-click="confirmModal#Hide"/>
+                <action-button text="Delete" on-click="confirmDeleteClicked"/>
+            </horizontal>
+        </vertical>
+    </modal>
 </bg>

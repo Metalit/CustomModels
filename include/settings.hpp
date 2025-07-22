@@ -60,6 +60,7 @@ DECLARE_CLASS_CODEGEN_INTERFACES(CustomModels, SelectionSettings, HMUI::ViewCont
     DECLARE_INSTANCE_FIELD(HMUI::InputFieldView*, searchInput);
     DECLARE_INSTANCE_FIELD(UnityEngine::Transform*, sabersHorizontal);
     DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, modelList);
+    DECLARE_INSTANCE_FIELD(HMUI::ModalView*, confirmModal);
 
     DECLARE_INSTANCE_METHOD(void, modelTypeSelected, HMUI::SegmentedControl*, int idx);
     DECLARE_INSTANCE_METHOD(void, searchInputTyped, StringW value);
@@ -67,9 +68,11 @@ DECLARE_CLASS_CODEGEN_INTERFACES(CustomModels, SelectionSettings, HMUI::ViewCont
     DECLARE_INSTANCE_METHOD(void, menuPointerSelected, HMUI::SegmentedControl*, int idx);
     DECLARE_INSTANCE_METHOD(void, modelSelected, HMUI::TableView*, int idx);
     DECLARE_INSTANCE_METHOD(void, modelDeleted, int idx);
+    DECLARE_INSTANCE_METHOD(void, confirmDeleteClicked);
 
     DECLARE_INSTANCE_FIELD(StringW, search);
     DECLARE_INSTANCE_FIELD(int, selectedModel);
+    DECLARE_INSTANCE_FIELD(int, deletingModel);
     std::vector<class ListItem*> models;
 
    private:

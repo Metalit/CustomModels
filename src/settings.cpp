@@ -277,7 +277,15 @@ void SelectionSettings::modelSelected(HMUI::TableView*, int idx) {
 }
 
 void SelectionSettings::modelDeleted(int idx) {
-    models[idx]->Delete();
+    NULL_CHECK(confirmModal);
+    deletingModel = idx;
+    confirmModal->Show(true, true, nullptr);
+}
+
+void SelectionSettings::confirmDeleteClicked() {
+    NULL_CHECK(confirmModal);
+    models[deletingModel]->Delete();
+    confirmModal->Hide(true, nullptr);
     RefreshModelList(true);
     PreviewSettings::GetInstance()->Refresh(true);
     if (SettingsCoordinator::GetInstance()->modelType == 0 && SettingsCoordinator::GetInstance()->menuPointer)

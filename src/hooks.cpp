@@ -4,12 +4,13 @@
 #include "GlobalNamespace/ConditionalMaterialSwitcher.hpp"
 #include "GlobalNamespace/GameplayCoreSceneSetupData.hpp"
 #include "GlobalNamespace/LayerMasks.hpp"
+#include "GlobalNamespace/LevelListTableCell.hpp"
 #include "GlobalNamespace/MainFlowCoordinator.hpp"
 #include "GlobalNamespace/NoteDebrisSpawner.hpp"
 #include "GlobalNamespace/ObstacleMaterialSetter.hpp"
 #include "GlobalNamespace/SaberTrailRenderer.hpp"
-#include "GlobalNamespace/TutorialScenesTransitionSetupDataSO.hpp"
 #include "GlobalNamespace/TutorialSceneSetupData.hpp"
+#include "GlobalNamespace/TutorialScenesTransitionSetupDataSO.hpp"
 #include "GlobalNamespace/UIKeyboardManager.hpp"
 #include "VRUIControls/VRGraphicRaycaster.hpp"
 #include "Zenject/DiContainer.hpp"
@@ -284,4 +285,14 @@ MAKE_AUTO_HOOK_MATCH(
     }
 
     UIKeyboardManager_OpenKeyboardFor(self, input);
+}
+
+// only show delete button on hovered models
+MAKE_AUTO_HOOK_MATCH(
+    LevelListTableCell_RefreshVisuals, &LevelListTableCell::RefreshVisuals, void, LevelListTableCell* self
+) {
+    if (self->name->Contains("CustomModels"))
+        self->_favoritesBadgeImage->enabled = self->highlighted;
+
+    LevelListTableCell_RefreshVisuals(self);
 }
