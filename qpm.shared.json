@@ -7,7 +7,7 @@
     "info": {
       "name": "Custom Models",
       "id": "custommodels",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "url": "https://github.com/Metalit/CustomModels",
       "additionalData": {
         "overrideSoName": "libcustommodels.so",

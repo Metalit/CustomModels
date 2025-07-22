@@ -181,7 +181,7 @@ static void RemoveLoadingGuard() {
 
 static CustomModels::CustomSaberTrail*
 CreateTrail(UnityEngine::GameObject* saber, CustomModels::Trail const& trail, CustomModels::TrailSettings& settings) {
-    auto parent = UnityEngine::GameObject::New_ctor(fmt::format("Trail{}", trail.info.trailId));
+    auto parent = UnityEngine::GameObject::New_ctor(fmt::format("CustomModelsTrail{}", trail.info.trailId));
     auto component = parent->AddComponent<CustomModels::CustomSaberTrail*>();
     parent->transform->SetParent(saber->transform, false);
 
@@ -195,6 +195,7 @@ CreateTrail(UnityEngine::GameObject* saber, CustomModels::Trail const& trail, Cu
     bottom->SetParent(parent->transform, false);
     bottom->localPosition = trail.topPos - (trail.topPos - trail.bottomPos) * settings.Width();
 
+    component->trailId = trail.info.trailId;
     component->top = top;
     component->bottom = bottom;
 
@@ -303,9 +304,10 @@ void CustomModels::UpdateSaberColor(UnityEngine::Transform* parent, bool menu, G
         colors->SetSidedColor(left);
 
     if (auto info = GetTrailsInfo(menu)) {
+        auto trails = saber->GetComponentsInChildren<CustomSaberTrail*>();
         for (auto& trail : left ? info->leftTrails : info->rightTrails) {
-            if (auto child = saber->Find(fmt::format("Trail{}", trail.info.trailId)))
-                UpdateTrailColor(child->GetComponent<CustomSaberTrail*>(), menu, trail);
+            if (auto child = trails->FirstOrDefault([id = trail.info.trailId](auto trail) { return trail->trailId == id; }))
+                UpdateTrailColor(child, menu, trail);
         }
     }
 }
@@ -372,22 +374,24 @@ static void UpdateTrailPreview(UnityEngine::Transform* parent, CustomModels::Tra
 }
 
 void CustomModels::UpdateSabersPreview(UnityEngine::Transform* preview, bool menu) {
-    auto trails = GetTrailsInfo(menu);
+    auto info = GetTrailsInfo(menu);
     bool left = true;
 
     for (auto name : {"LeftSaber", "RightSaber"}) {
-        AddLoadingGuard(menu, true);
+        AddLoadingGuard(menu, false);
 
         auto saber = preview->Find(name);
         if (!saber)
             continue;
         ScaleSaber(saber, menu);
 
-        if (trails) {
-            AddLoadingGuard(menu, false);
-            for (auto& trail : left ? trails->leftTrails : trails->rightTrails) {
-                if (auto child = saber->Find(fmt::format("Trail{}", trail.info.trailId)))
-                    UpdateTrailPreview(child, trail, menu);
+        if (info) {
+            AddLoadingGuard(menu, true);
+
+            auto trails = saber->GetComponentsInChildren<CustomSaberTrail*>();
+            for (auto& trail : left ? info->leftTrails : info->rightTrails) {
+                if (auto child = trails->FirstOrDefault([id = trail.info.trailId](auto trail) { return trail->trailId == id; }))
+                    UpdateTrailPreview(child->transform, trail, menu);
             }
         }
 

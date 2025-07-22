@@ -19,6 +19,7 @@ DECLARE_CLASS_CODEGEN(CustomModels, CustomSaberTrail, GlobalNamespace::SaberTrai
     DECLARE_INSTANCE_METHOD(bool, PreLateUpdate);
     DECLARE_INSTANCE_METHOD(void, OnDestroy);
 
+    DECLARE_INSTANCE_FIELD(int, trailId);
     DECLARE_INSTANCE_FIELD(UnityEngine::Transform*, top);
     DECLARE_INSTANCE_FIELD(UnityEngine::Transform*, bottom);
     DECLARE_INSTANCE_FIELD_DEFAULT(UnityEngine::Mesh*, staticMesh, nullptr);
