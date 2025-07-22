@@ -44,6 +44,14 @@ std::string CustomModels::Wall::ObjectName() {
 
 void CustomModels::Wall::PostLoad() {}  // nothing to change
 
+static void AddLoadingGuard() {
+    getConfig().LoadingGuard.SetValue(CustomModels::assets[CustomModels::Selection::Wall]->asset.currentFile);
+}
+
+static void RemoveLoadingGuard() {
+    getConfig().LoadingGuard.SetValue("");
+}
+
 static void SetMesh(UnityEngine::Transform* object, UnityEngine::GameObject* copy) {
     object->GetComponent<UnityEngine::MeshFilter*>()->mesh = copy ? copy->GetComponent<UnityEngine::MeshFilter*>()->sharedMesh : nullptr;
 }
@@ -67,15 +75,15 @@ void CustomModels::InitWall(UnityEngine::GameObject* prefab, bool mirror) {
     if (mirror && !wall->info.isMirrorable)
         return;
 
+    AddLoadingGuard();
+
     auto transform = prefab->transform;
 
     auto frame = transform->Find(mirror ? "ObstacleFrame" : "HideWrapper/ObstacleFrame");
     auto customFrame = wall->asset.GetChild("Frame");
 
-    if (!customFrame && (wall->info.replaceFrameMesh || wall->info.replaceFrameMaterial)) {
+    if (!customFrame && (wall->info.replaceFrameMesh || wall->info.replaceFrameMaterial))
         logger.error("custom wall frame not found");
-        return;
-    }
 
     if (!wall->info.disableFrame && !getConfig().WallsSettings().disableFrame) {
         if (!mirror && wall->info.disableFakeGlow)
@@ -96,10 +104,8 @@ void CustomModels::InitWall(UnityEngine::GameObject* prefab, bool mirror) {
         core->Find("DepthWrite")->GetComponent<UnityEngine::Renderer*>()->enabled = false;
         auto customCore = wall->asset.GetChild("Core");
 
-        if (!customCore && (wall->info.replaceCoreMesh || wall->info.replaceCoreMaterial)) {
+        if (!customCore && (wall->info.replaceCoreMesh || wall->info.replaceCoreMaterial))
             logger.error("custom wall core not found");
-            return;
-        }
 
         if (!wall->info.disableCore && !getConfig().WallsSettings().disableCore) {
             if (wall->info.replaceCoreMesh)
@@ -116,10 +122,14 @@ void CustomModels::InitWall(UnityEngine::GameObject* prefab, bool mirror) {
     }
 
     prefab->AddComponent<ColorVisuals*>()->SetColor(ColorScheme()->_obstaclesColor, UnityEngine::Color::get_black());
+
+    RemoveLoadingGuard();
 }
 
 UnityEngine::Transform* CustomModels::PreviewWalls(UnityEngine::Vector3 position, UnityEngine::Quaternion rotation) {
     logger.debug("creating wall preview");
+
+    AddLoadingGuard();
 
     auto preview = UnityEngine::GameObject::New_ctor("CustomModelsPreview")->transform;
     auto scale = UnityEngine::Vector3(1.5, 1, 0.5);
@@ -158,11 +168,15 @@ UnityEngine::Transform* CustomModels::PreviewWalls(UnityEngine::Vector3 position
         instance->localPosition = {0, -scale.y / 2, -scale.z / 2};
     }
 
+    RemoveLoadingGuard();
+
     preview->SetPositionAndRotation(position, rotation);
     return preview;
 }
 
 void CustomModels::UpdateWallsPreview(UnityEngine::Transform* preview) {
+    AddLoadingGuard();
+
     auto instance = preview->GetChild(0);
     auto& settings = getConfig().WallsSettings();
 
@@ -179,4 +193,6 @@ void CustomModels::UpdateWallsPreview(UnityEngine::Transform* preview) {
         core = instance->Find("ObstacleCore");
     if (core)
         core->gameObject->active = !settings.disableCore;
+
+    RemoveLoadingGuard();
 }

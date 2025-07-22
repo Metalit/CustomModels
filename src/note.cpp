@@ -277,6 +277,14 @@ void CustomModels::Note::PostLoad() {
     ResetObjectPositions(prefab);
 }
 
+static void AddLoadingGuard() {
+    getConfig().LoadingGuard.SetValue(CustomModels::assets[CustomModels::Selection::Note]->asset.currentFile);
+}
+
+static void RemoveLoadingGuard() {
+    getConfig().LoadingGuard.SetValue("");
+}
+
 void CustomModels::InitNote(UnityEngine::GameObject* prefab, NoteType type, bool debris, bool mirror) {
     logger.info("custom note init {}, debris: {}, mirror: {}", (int) type, debris, mirror);
 
@@ -324,6 +332,8 @@ void CustomModels::InitNote(UnityEngine::GameObject* prefab, NoteType type, bool
     if (!instance)
         return;  // replacement not found
 
+    AddLoadingGuard();
+
     if (debris)
         instance->AddComponent<DebrisVisuals*>();
     else if (type != NoteType::Bomb)
@@ -343,6 +353,8 @@ void CustomModels::InitNote(UnityEngine::GameObject* prefab, NoteType type, bool
     ReplaceMaterials(instance);  // shouldn't this happen before setting the properties on the mirrored materials?
     instance->transform->SetParent(parent, false);
     instance->transform->localScale = {0.4, 0.4, 0.4};
+
+    RemoveLoadingGuard();
 }
 
 static void ColorChildNotes(UnityEngine::Transform* parent, bool chain) {
@@ -371,6 +383,8 @@ static void ColorDefaultNotes(UnityEngine::Transform* parent, UnityEngine::Color
 UnityEngine::Transform* CustomModels::PreviewNotes(UnityEngine::Vector3 position, UnityEngine::Quaternion rotation) {
     logger.debug("creating note preview");
 
+    AddLoadingGuard();
+
     auto preview = UnityEngine::GameObject::New_ctor("CustomModelsPreview")->transform;
 
     Note* note = dynamic_cast<Note*>(assets[Selection::Note]);
@@ -394,6 +408,8 @@ UnityEngine::Transform* CustomModels::PreviewNotes(UnityEngine::Vector3 position
         parent->SetParent(preview, false);
     }
 
+    RemoveLoadingGuard();
+
     preview->SetPositionAndRotation(position, rotation);
     return preview;
 }
@@ -404,6 +420,8 @@ static inline void SetPositionRelativeTo(UnityEngine::Transform* anchor, UnityEn
 }
 
 void CustomModels::UpdateNotesPreview(UnityEngine::Transform* preview) {
+    AddLoadingGuard();
+
     auto& settings = getConfig().NotesSettings();
     auto parent = preview->GetChild(0);
 
@@ -438,4 +456,6 @@ void CustomModels::UpdateNotesPreview(UnityEngine::Transform* preview) {
         SetPositionRelativeTo(preview, defaultBomb, {x, 0});
         defaultBomb->gameObject->active = !bomb || settings.defaultBombs;
     }
+
+    RemoveLoadingGuard();
 }

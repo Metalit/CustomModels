@@ -13,7 +13,7 @@
 #include "zip.hpp"
 
 void CustomModels::AssetInfo::Load(std::string const& file, std::function<void()> onDone) {
-    if (!file.empty()) {
+    if (!file.empty() && !getConfig().LoadFailed(file)) {
         try {
             if (!files.contains(file))
                 throw std::runtime_error("manifest not found");
@@ -22,8 +22,11 @@ void CustomModels::AssetInfo::Load(std::string const& file, std::function<void()
             asset.Load(file, ObjectName(), [this, onDone](bool changed, bool error) {
                 if (error)
                     SetDefault();
-                else if (changed)
+                else if (changed) {
+                    getConfig().LoadingGuard.SetValue(asset.currentFile);
                     PostLoad();
+                    getConfig().LoadingGuard.SetValue("");
+                }
                 if (onDone)
                     onDone();
             });
@@ -255,12 +258,22 @@ struct FileListItem : CustomModels::ListItem {
                 CustomModels::assets[(CustomModels::Selection) i]->SetDefault();
             }
         }
+        auto fails = getConfig().LoadingFailures.GetValue();
+        for (int i = 0; i < fails.size(); i++) {
+            if (fails[i] == file) {
+                fails.erase(fails.begin() + i);
+                getConfig().LoadingFailures.SetValue(fails, false);
+                changed = true;
+                break;
+            }
+        }
         if (changed)
             getConfig().Save();
         std::filesystem::remove(file);
         CustomModels::LoadManifests();
     }
     bool Deletable() override { return true; }
+    bool Errored() override { return getConfig().LoadFailed(file); }
 };
 
 bool CustomModels::ListItem::Matches(std::string const& search) {

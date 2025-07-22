@@ -18,6 +18,10 @@
 
 static modloader::ModInfo modInfo = {MOD_ID, VERSION, 0};
 
+static bool NonMinorVersionEquals(std::string v1, std::string v2) {
+    return v1.substr(0, v1.rfind(".")) == v2.substr(0, v2.rfind("."));
+}
+
 extern "C" void setup(CModInfo* info) {
     *info = modInfo.to_c();
 
@@ -28,6 +32,20 @@ extern "C" void setup(CModInfo* info) {
             mkpath(path.string());
     }
     getConfig().Init(modInfo);
+
+    auto fails = getConfig().LoadingFailures.GetValue();
+
+    if (!NonMinorVersionEquals(getConfig().ModVersion.GetValue(), VERSION))
+        fails.clear();
+    else if (!getConfig().LoadingGuard.GetValue().empty())
+        fails.emplace_back(getConfig().LoadingGuard.GetValue());
+
+    // allow retrying by deleting the file, if you really want to
+    std::erase_if(fails, [](std::string const& file) { return !fileexists(file); });
+
+    getConfig().LoadingFailures.SetValue(fails);
+    getConfig().LoadingGuard.SetValue("");
+    getConfig().ModVersion.SetValue(VERSION);
 
     Paper::Logger::RegisterFileContextId(MOD_ID);
     logger.info("Completed setup!");

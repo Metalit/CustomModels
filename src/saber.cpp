@@ -166,6 +166,19 @@ void CustomModels::Saber::PostLoad() {
         info.isLegacy ? FindLegacyTrails(asset.bundle, asset.asset, *this) : FindTrails(asset.asset, *this);
 }
 
+static void AddLoadingGuard(bool menu, bool trail) {
+    CustomModels::Selection selection;
+    if (trail)
+        selection = menu ? CustomModels::Selection::MenuTrail : CustomModels::Selection::Trail;
+    else
+        selection = menu ? CustomModels::Selection::MenuSaber : CustomModels::Selection::Saber;
+    getConfig().LoadingGuard.SetValue(CustomModels::assets[selection]->asset.currentFile);
+}
+
+static void RemoveLoadingGuard() {
+    getConfig().LoadingGuard.SetValue("");
+}
+
 static CustomModels::CustomSaberTrail*
 CreateTrail(UnityEngine::GameObject* saber, CustomModels::Trail const& trail, CustomModels::TrailSettings& settings) {
     auto parent = UnityEngine::GameObject::New_ctor(fmt::format("Trail{}", trail.info.trailId));
@@ -311,6 +324,8 @@ static void PreviewTrails(UnityEngine::GameObject* saber, std::vector<CustomMode
 UnityEngine::Transform* CustomModels::PreviewSabers(UnityEngine::Vector3 position, UnityEngine::Quaternion rotation, bool menu) {
     logger.debug("creating saber preview");
 
+    AddLoadingGuard(menu, false);
+
     auto preview = UnityEngine::GameObject::New_ctor("CustomModelsPreview")->transform;
     SetLayerRecursively(preview, CustomModels::SaberLayer);
 
@@ -327,11 +342,15 @@ UnityEngine::Transform* CustomModels::PreviewSabers(UnityEngine::Vector3 positio
     rightSaber->transform->localPosition = {0.25, 0, 0};
 
     if (auto info = GetTrailsInfo(menu)) {
+        AddLoadingGuard(menu, true);
+
         logger.info("preview trails init");
         auto& settings = menu ? getConfig().MenuTrailSettings() : getConfig().TrailSettings();
         PreviewTrails(leftSaber, info->leftTrails, settings);
         PreviewTrails(rightSaber, info->rightTrails, settings);
     }
+
+    RemoveLoadingGuard();
 
     preview->SetPositionAndRotation(position, rotation);
     return preview;
@@ -357,12 +376,15 @@ void CustomModels::UpdateSabersPreview(UnityEngine::Transform* preview, bool men
     bool left = true;
 
     for (auto name : {"LeftSaber", "RightSaber"}) {
+        AddLoadingGuard(menu, true);
+
         auto saber = preview->Find(name);
         if (!saber)
             continue;
         ScaleSaber(saber, menu);
 
         if (trails) {
+            AddLoadingGuard(menu, false);
             for (auto& trail : left ? trails->leftTrails : trails->rightTrails) {
                 if (auto child = saber->Find(fmt::format("Trail{}", trail.info.trailId)))
                     UpdateTrailPreview(child, trail, menu);
@@ -371,4 +393,6 @@ void CustomModels::UpdateSabersPreview(UnityEngine::Transform* preview, bool men
 
         left = false;
     }
+
+    RemoveLoadingGuard();
 }

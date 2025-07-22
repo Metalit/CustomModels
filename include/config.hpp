@@ -105,6 +105,19 @@ DECLARE_CONFIG(Config) {
     PROFILE_GETTER(MenuTrailSettings);
     PROFILE_GETTER(NotesSettings);
     PROFILE_GETTER(WallsSettings);
+
+    CONFIG_VALUE(LoadingGuard, std::string, "LoadingGuard", "");
+    CONFIG_VALUE(LoadingFailures, std::vector<std::string>, "LoadingFailures", {});
+    CONFIG_VALUE(ModVersion, std::string, "ModVersion", VERSION);
+
+    bool LoadFailed(std::string const& file) {
+        auto fails = LoadingFailures.GetValue();
+        for (auto& fail : fails) {
+            if (fail == file)
+                return true;
+        }
+        return false;
+    }
 };
 
 #undef PROFILE_GETTER

@@ -133,9 +133,12 @@ static GlobalNamespace::LevelListTableCell* CreateTableCellPrefab() {
 
     auto image = BSML::Lite::CreateClickableImage(instance, PNG_SPRITE(icons::delete), nullptr, {36, 0}, {5, 5});
     image->defaultColor = {1, 1, 1, 1};
-    image->highlightColor = {1, 0.2, 0.2, 1};
+    image->highlightColor = {0.9, 0, 0, 1};
+    image->gameObject->AddComponent<UnityEngine::CanvasGroup*>()->ignoreParentGroups = true;
     // closest field available
     instance->_favoritesBadgeImage = image;
+
+    BSML::Lite::AddHoverHint(instance, "");
 
     return instance;
 }
@@ -157,6 +160,17 @@ HMUI::TableCell* SelectionSettings::CellForIdx(HMUI::TableView*, int idx) {
     cell->_songNameText->text = content->Name();
     cell->_songAuthorText->text = content->Author();
     cell->_coverImage->sprite = content->Cover();
+
+    bool error = content->Errored();
+    cell->_notOwned = error;
+    auto color = error ? UnityEngine::Color{1, 0.3, 0.3, 1} : UnityEngine::Color{0, 0.75, 1, 1};
+    cell->_selectedBackgroundColor = color;
+    color.a = 0.75;
+    cell->_selectedAndHighlightedBackgroundColor = color;
+
+    auto hint = cell->GetComponent<HMUI::HoverHint*>();
+    hint->text = error ? "Model crashed while loading! Please save the model file and report this issue" : "";
+    hint->_hoverHintController = BSML::Helpers::GetHoverHintController();
 
     auto image = (BSML::ClickableImage*) cell->_favoritesBadgeImage.ptr();
     image->gameObject->active = content->Deletable();

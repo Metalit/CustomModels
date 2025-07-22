@@ -37,6 +37,7 @@ namespace CustomModels {
         virtual bool Selected() = 0;
         virtual void Delete() {};
         virtual bool Deletable() { return false; };
+        virtual bool Errored() { return false; };
         virtual ~ListItem() = default;
 
         bool Matches(std::string const& search);

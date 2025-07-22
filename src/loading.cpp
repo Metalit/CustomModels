@@ -63,7 +63,7 @@ static void LoadBundle(std::string const& bytes, std::string file) {
 
     BSML::MainThreadScheduler::ScheduleUntil(
         [request]() { return request->isDone; },
-        [request, file]() {
+        [request = SafePtr(request), file]() {
             auto& bundle = bundles[file];
             auto loaded = request->assetBundle;
             bundle.bundle = loaded;
