@@ -44,6 +44,11 @@ namespace CustomModels {
         }
     };
 
+    DECLARE_JSON_STRUCT(WallSettings) {
+        VALUE_DEFAULT(bool, disableFrame, false);
+        VALUE_DEFAULT(bool, disableCore, false);
+    };
+
     DECLARE_JSON_STRUCT(Profile) {
         // empty string is default model
         VALUE_DEFAULT(std::string, SaberModel, "");
@@ -63,6 +68,7 @@ namespace CustomModels {
         VALUE_DEFAULT(CustomModels::SaberSettings, MenuSaberSettings, {});
         VALUE_DEFAULT(CustomModels::TrailSettings, MenuTrailSettings, {});
         VALUE_DEFAULT(CustomModels::NoteSettings, NotesSettings, {});
+        VALUE_DEFAULT(CustomModels::WallSettings, WallsSettings, {});
     };
 }
 
@@ -98,6 +104,7 @@ DECLARE_CONFIG(Config) {
     PROFILE_GETTER(MenuSaberSettings);
     PROFILE_GETTER(MenuTrailSettings);
     PROFILE_GETTER(NotesSettings);
+    PROFILE_GETTER(WallsSettings);
 };
 
 #undef PROFILE_GETTER

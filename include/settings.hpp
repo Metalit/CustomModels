@@ -109,6 +109,9 @@ DECLARE_CLASS_CODEGEN(CustomModels, ModSettings, HMUI::ViewController) {
     DECLARE_INSTANCE_FIELD(BSML::ToggleSetting*, noteSizeToggle);
     DECLARE_INSTANCE_FIELD(BSML::ToggleSetting*, defaultBombsToggle);
     DECLARE_INSTANCE_FIELD(BSML::ToggleSetting*, defaultDebrisToggle);
+    DECLARE_INSTANCE_FIELD(UnityEngine::GameObject*, wallsSettings);
+    DECLARE_INSTANCE_FIELD(BSML::ToggleSetting*, disableFrameToggle);
+    DECLARE_INSTANCE_FIELD(BSML::ToggleSetting*, disableCoreToggle);
     DECLARE_INSTANCE_FIELD(HMUI::ModalView*, profileNameModal);
     DECLARE_INSTANCE_FIELD(HMUI::InputFieldView*, profileNameInput);
 
@@ -131,6 +134,8 @@ DECLARE_CLASS_CODEGEN(CustomModels, ModSettings, HMUI::ViewController) {
     DECLARE_INSTANCE_METHOD(void, noteSizeToggled, bool value);
     DECLARE_INSTANCE_METHOD(void, defaultBombsToggled, bool value);
     DECLARE_INSTANCE_METHOD(void, defaultDebrisToggled, bool value);
+    DECLARE_INSTANCE_METHOD(void, disableFrameToggled, bool value);
+    DECLARE_INSTANCE_METHOD(void, disableCoreToggled, bool value);
     DECLARE_INSTANCE_METHOD(void, nameModalClosed, StringW value);
 
     DECLARE_INSTANCE_FIELD(int, nameModalAction);

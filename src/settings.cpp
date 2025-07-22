@@ -318,14 +318,18 @@ void ModSettings::Refresh() {
         noteSizeSlider,
         noteSizeToggle,
         defaultBombsToggle,
-        defaultDebrisToggle
+        defaultDebrisToggle,
+        wallsSettings,
+        disableFrameToggle,
+        disableCoreToggle
     );
 
-    auto modelType = SettingsCoordinator::GetInstance()->modelType;
-    auto isTrail = SettingsCoordinator::GetInstance()->trail;
+    int modelType = SettingsCoordinator::GetInstance()->modelType;
+    bool isTrail = SettingsCoordinator::GetInstance()->trail;
     saberSettings->active = modelType == 0 && !isTrail;
     trailSettings->active = modelType == 0 && isTrail;
     notesSettings->active = modelType == 1;
+    wallsSettings->active = modelType == 2;
 
     MetaCore::UI::InstantSetToggle(enableToggle, getConfig().Enabled.GetValue());
 
@@ -361,6 +365,10 @@ void ModSettings::Refresh() {
     MetaCore::UI::InstantSetToggle(noteSizeToggle, notes.overrideSize);
     MetaCore::UI::InstantSetToggle(defaultBombsToggle, notes.defaultBombs);
     MetaCore::UI::InstantSetToggle(defaultDebrisToggle, notes.defaultDebris);
+
+    auto& walls = getConfig().WallsSettings();
+    MetaCore::UI::InstantSetToggle(disableFrameToggle, walls.disableFrame);
+    MetaCore::UI::InstantSetToggle(disableCoreToggle, walls.disableCore);
 
     UnityEngine::UI::LayoutRebuilder::ForceRebuildLayoutImmediate(layout);
 }
@@ -512,6 +520,18 @@ void ModSettings::defaultBombsToggled(bool value) {
 
 void ModSettings::defaultDebrisToggled(bool value) {
     getConfig().NotesSettings().defaultDebris = value;
+    getConfig().Save();
+    PreviewSettings::GetInstance()->Refresh(false);
+}
+
+void ModSettings::disableFrameToggled(bool value) {
+    getConfig().WallsSettings().disableFrame = value;
+    getConfig().Save();
+    PreviewSettings::GetInstance()->Refresh(false);
+}
+
+void ModSettings::disableCoreToggled(bool value) {
+    getConfig().WallsSettings().disableCore = value;
     getConfig().Save();
     PreviewSettings::GetInstance()->Refresh(false);
 }

@@ -37,6 +37,10 @@ namespace IncludedAssets {
         extern "C" uint8_t _binary_icons_delete_png_end[];
         extern "C" uint8_t _binary_icons_edit_png_start[];
         extern "C" uint8_t _binary_icons_edit_png_end[];
+        extern "C" uint8_t _binary_icons_no_core_png_start[];
+        extern "C" uint8_t _binary_icons_no_core_png_end[];
+        extern "C" uint8_t _binary_icons_no_frame_png_start[];
+        extern "C" uint8_t _binary_icons_no_frame_png_end[];
         extern "C" uint8_t _binary_icons_no_saber_png_start[];
         extern "C" uint8_t _binary_icons_no_saber_png_end[];
         extern "C" uint8_t _binary_icons_no_trail_png_start[];
@@ -87,6 +91,10 @@ namespace IncludedAssets {
     DECLARE_ASSET_NS(icons, delete_png, icons_delete_png);
     // icons/edit.png
     DECLARE_ASSET_NS(icons, edit_png, icons_edit_png);
+    // icons/no_core.png
+    DECLARE_ASSET_NS(icons, no_core_png, icons_no_core_png);
+    // icons/no_frame.png
+    DECLARE_ASSET_NS(icons, no_frame_png, icons_no_frame_png);
     // icons/no_saber.png
     DECLARE_ASSET_NS(icons, no_saber_png, icons_no_saber_png);
     // icons/no_trail.png

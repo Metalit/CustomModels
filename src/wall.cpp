@@ -7,6 +7,7 @@
 #include "UnityEngine/MeshRenderer.hpp"
 #include "UnityEngine/Renderer.hpp"
 #include "colors.hpp"
+#include "config.hpp"
 #include "defaults.hpp"
 #include "main.hpp"
 #include "material.hpp"
@@ -62,8 +63,6 @@ void CustomModels::InitWall(UnityEngine::GameObject* prefab, bool mirror) {
     logger.info("custom wall init, mirror: {}", mirror);
 
     Wall* wall = dynamic_cast<Wall*>(assets[Selection::Wall]);
-    if (!wall->asset.asset)
-        return;  // leave walls unmodified
 
     if (mirror && !wall->info.isMirrorable)
         return;
@@ -78,15 +77,18 @@ void CustomModels::InitWall(UnityEngine::GameObject* prefab, bool mirror) {
         return;
     }
 
-    if (!wall->info.disableFrame) {
+    if (!wall->info.disableFrame && !getConfig().WallsSettings().disableFrame) {
         if (!mirror && wall->info.disableFakeGlow)
             SetMesh(transform->Find("HideWrapper/ObstacleFakeGlow"), nullptr);
         if (wall->info.replaceFrameMesh)
             SetMesh(frame, customFrame);
         if (wall->info.replaceFrameMaterial)
             SetMaterial(frame, customFrame, mirror);
-    } else
+    } else {
         SetMesh(frame, nullptr);
+        if (!mirror && getConfig().WallsSettings().disableFrame)
+            SetMesh(transform->Find("HideWrapper/ObstacleFakeGlow"), nullptr);
+    }
 
     // seems like mirrored walls don't have cores
     if (!mirror) {
@@ -99,7 +101,7 @@ void CustomModels::InitWall(UnityEngine::GameObject* prefab, bool mirror) {
             return;
         }
 
-        if (!wall->info.disableCore) {
+        if (!wall->info.disableCore && !getConfig().WallsSettings().disableCore) {
             if (wall->info.replaceCoreMesh)
                 SetMesh(core, customCore);
             if (wall->info.replaceCoreMaterial) {
@@ -161,5 +163,20 @@ UnityEngine::Transform* CustomModels::PreviewWalls(UnityEngine::Vector3 position
 }
 
 void CustomModels::UpdateWallsPreview(UnityEngine::Transform* preview) {
-    // no wall settings atm
+    auto instance = preview->GetChild(0);
+    auto& settings = getConfig().WallsSettings();
+
+    auto frame = instance->Find("Frame");
+    if (!frame)
+        frame = instance->Find("HideWrapper/ObstacleFrame");
+    if (frame)
+        frame->gameObject->active = !settings.disableFrame;
+    if (auto glow = instance->Find("HideWrapper/ObstacleFakeGlow"))
+        glow->gameObject->active = !settings.disableFrame;
+
+    auto core = instance->Find("Core");
+    if (!core)
+        core = instance->Find("ObstacleCore");
+    if (core)
+        core->gameObject->active = !settings.disableCore;
 }

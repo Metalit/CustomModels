@@ -63,3 +63,5 @@ BSML_ICON(trail_offset);
 BSML_ICON(note_size);
 BSML_ICON(bomb);
 BSML_ICON(debris);
+BSML_ICON(no_frame);
+BSML_ICON(no_core);

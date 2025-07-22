@@ -82,6 +82,19 @@
                 <toggle-setting id="defaultDebrisToggle" text="Default Debris" pref-width="90" on-change="defaultDebrisToggled" />
             </horizontal>
         </vertical>
+
+        <vertical id="wallsSettings" bg="round-rect-panel" bg-alpha="0.6" pad="2" spacing="1" horizontal-fit="PreferredSize"
+            vertical-fit="PreferredSize" active="false">
+            <horizontal spacing="1" hover-hint="Disable the frame or border of walls - has no effect on hitboxes">
+                <image src="CustomModels_no_frame" pref-width="6" pref-height="6" preserve-aspect="true" />
+                <toggle-setting id="disableFrameToggle" text="Disable Frame" pref-width="90" on-change="disableFrameToggled" />
+            </horizontal>
+
+            <horizontal spacing="1" hover-hint="Disable the core or filling of walls - has no effect on hitboxes">
+                <image src="CustomModels_no_core" pref-width="6" pref-height="6" preserve-aspect="true" />
+                <toggle-setting id="disableCoreToggle" text="Disable Core" pref-width="90" on-change="disableCoreToggled" />
+            </horizontal>
+        </vertical>
     </vertical>
     <modal id="profileNameModal" size-delta-x="65" size-delta-y="15" anchor-pos-x="0" anchor-pos-y="10" click-off-closes="true">
         <text text="Enter new profile name" size-delta-x="50" size-delta-y="8" anchor-pos-y="4.5" align="Bottom" />
