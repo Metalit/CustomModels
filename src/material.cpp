@@ -73,7 +73,8 @@ static UnityEngine::Material* FindReplacement(std::string const& name) {
         return replacements[name];
 
     UnityEngine::Material* ret = allMaterials->FirstOrDefault([&name](UnityEngine::Material* material) {
-        return !material->name->Contains("_replace") && name.find((std::string) material->name->ToLower()) != std::string::npos;
+        return material->name->Length > 0 && !material->name->Contains("_replace") &&
+               name.find((std::string) material->name->ToLower()) != std::string::npos;
     });
     replacements[name] = ret;
     return ret;
