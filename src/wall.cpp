@@ -3,6 +3,7 @@
 #include "GlobalNamespace/ObstacleMaterialSetter.hpp"
 #include "GlobalNamespace/SettingsManager.hpp"
 #include "GlobalNamespace/StretchableObstacle.hpp"
+#include "GlobalNamespace/ObstacleController.hpp"
 #include "UnityEngine/MeshFilter.hpp"
 #include "UnityEngine/MeshRenderer.hpp"
 #include "UnityEngine/Renderer.hpp"
@@ -156,6 +157,10 @@ UnityEngine::Transform* CustomModels::PreviewWalls(UnityEngine::Vector3 position
     } else {
         auto instance = GetDefaultWall()->transform;
         instance->SetParent(preview, false);
+
+        for (auto obstacleController : instance->GetComponentsInChildren<GlobalNamespace::ObstacleController*>()) {
+            UnityEngine::Object::DestroyImmediate(obstacleController);
+        }
 
         auto stretch = instance->GetComponent<GlobalNamespace::StretchableObstacle*>();
         stretch->SetAllProperties(scale.x, scale.y, scale.z, MenuWallColor(), 0);
