@@ -121,6 +121,8 @@ static bool ConvertQSaber(std::filesystem::path const& path) {
     auto output = path.stem().string() + ".whacker";
 
     auto bundle = UnityEngine::AssetBundle::LoadFromFile(path.string());
+    if (!bundle)
+        return false;
 
     CustomModels::Manifest manifest;
     if (!LoadManifest(bundle, manifest, path.stem())) {
@@ -153,6 +155,8 @@ static bool ConvertQBloq(std::filesystem::path const& path) {
     auto output = path.stem().string() + ".cyoob";
 
     auto bundle = UnityEngine::AssetBundle::LoadFromFile(path.string());
+    if (!bundle)
+        return false;
 
     CustomModels::Manifest manifest;
     if (!LoadManifest(bundle, manifest, path.stem())) {
@@ -188,6 +192,8 @@ static bool ConvertQWall(std::filesystem::path const& path) {
     auto output = path.stem().string() + ".box";
 
     auto bundle = UnityEngine::AssetBundle::LoadFromFile(path.string());
+    if (!bundle)
+        return false;
 
     CustomModels::Manifest manifest;
     if (!LoadManifest(bundle, manifest, path.stem())) {
@@ -214,18 +220,24 @@ void CustomModels::ConvertLegacyModels() {
     for (auto const& entry : std::filesystem::directory_iterator(folder)) {
         if (entry.is_directory())
             continue;
-        std::string extension = entry.path().extension();
-        bool converted = false;
-        if (extension == ".qsaber")
-            converted = ConvertQSaber(entry.path());
-        else if (extension == ".qbloq")
-            converted = ConvertQBloq(entry.path());
-        else if (extension == ".qwall")
-            converted = ConvertQWall(entry.path());
-        else
-            logger.debug("skipping file {}", entry.path().string());
-        if (converted)
-            remove.emplace_back(entry.path());
+        try {
+            std::string extension = entry.path().extension();
+            bool converted = false;
+            if (extension == ".qsaber")
+                converted = ConvertQSaber(entry.path());
+            else if (extension == ".qbloq")
+                converted = ConvertQBloq(entry.path());
+            else if (extension == ".qwall")
+                converted = ConvertQWall(entry.path());
+            else
+                logger.debug("skipping file {}", entry.path().string());
+            if (converted)
+                remove.emplace_back(entry.path());
+        } catch (il2cpp_utils::exceptions::StackTraceException const& exc) {
+            logger.error("failed to convert legacy model: {}", exc.what());
+        } catch (...) {
+            logger.error("failed to convert legacy model: unknown error");
+        }
     }
 
     for (auto& file : remove)
