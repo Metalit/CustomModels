@@ -3,6 +3,7 @@
 #include "GlobalNamespace/ColorNoteVisuals.hpp"
 #include "GlobalNamespace/ILazyCopyHashSet_1.hpp"
 #include "GlobalNamespace/NoteData.hpp"
+#include "GlobalNamespace/NoteController.hpp"
 #include "UnityEngine/MaterialPropertyBlock.hpp"
 #include "UnityEngine/MeshFilter.hpp"
 #include "UnityEngine/MeshRenderer.hpp"
@@ -404,8 +405,13 @@ UnityEngine::Transform* CustomModels::PreviewNotes(UnityEngine::Vector3 position
         GetDefaultBomb()->transform->SetParent(preview, false);
     } else {
         auto parent = GetDefaultNotes()->transform;
-        ColorDefaultNotes(parent, MenuLeftColor(), MenuRightColor());
         parent->SetParent(preview, false);
+
+        for (auto noteController : parent->GetComponentsInChildren<GlobalNamespace::NoteController*>()) {
+            UnityEngine::Object::DestroyImmediate(noteController);
+        }
+
+        ColorDefaultNotes(parent, MenuLeftColor(), MenuRightColor());
     }
 
     RemoveLoadingGuard();
