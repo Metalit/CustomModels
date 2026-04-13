@@ -20,7 +20,7 @@ bool CustomModels::CustomSaberAPI::InitOverride(UnityEngine::Transform* parent, 
 
     if (transform->GetChildCount() > 0) {
         logger.debug("already have a child! will update colors but not create saber");
-        UpdateSaberColor(parent, false, saber->saberType);
+        UpdateSaberColor(transform, false, saber->saberType);
         return false;
     }
 
