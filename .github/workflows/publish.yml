@@ -38,6 +38,7 @@ jobs:
           workflow_token: ${{ secrets.GITHUB_TOKEN }}
 
           restore: true
+          resolve_ndk: true
           cache: true
           version: "${{ github.event.inputs.version }}"
 

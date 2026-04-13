@@ -35,6 +35,7 @@ jobs:
           workflow_token: ${{ secrets.GITHUB_TOKEN }}
 
           restore: true
+          resolve_ndk: true
           cache: true
 
       - name: List Post Restore
