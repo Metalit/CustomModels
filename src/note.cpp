@@ -2,8 +2,8 @@
 
 #include "GlobalNamespace/ColorNoteVisuals.hpp"
 #include "GlobalNamespace/ILazyCopyHashSet_1.hpp"
-#include "GlobalNamespace/NoteData.hpp"
 #include "GlobalNamespace/NoteController.hpp"
+#include "GlobalNamespace/NoteData.hpp"
 #include "UnityEngine/MaterialPropertyBlock.hpp"
 #include "UnityEngine/MeshFilter.hpp"
 #include "UnityEngine/MeshRenderer.hpp"

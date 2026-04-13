@@ -1,9 +1,9 @@
 #include "wall.hpp"
 
+#include "GlobalNamespace/ObstacleController.hpp"
 #include "GlobalNamespace/ObstacleMaterialSetter.hpp"
 #include "GlobalNamespace/SettingsManager.hpp"
 #include "GlobalNamespace/StretchableObstacle.hpp"
-#include "GlobalNamespace/ObstacleController.hpp"
 #include "UnityEngine/MeshFilter.hpp"
 #include "UnityEngine/MeshRenderer.hpp"
 #include "UnityEngine/Renderer.hpp"
