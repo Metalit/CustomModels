@@ -329,11 +329,15 @@ void CustomModels::InitNote(UnityEngine::GameObject* prefab, NoteType type, bool
     if (debris && getConfig().NotesSettings().defaultDebris || type == NoteType::Bomb && getConfig().NotesSettings().defaultBombs)
         return;  // default debris/bombs override
 
-    auto instance = note->asset.InstantiateChild(childName);
-    if (!instance)
-        return;  // replacement not found
-
+    // Some note models crash inside libunity when instantiated - sometimes
+    // Still need to investigate, but for now this will prevent repeated crashing
     AddLoadingGuard();
+
+    auto instance = note->asset.InstantiateChild(childName);
+    if (!instance) {
+        RemoveLoadingGuard();
+        return;  // replacement not found
+    }
 
     if (debris)
         instance->AddComponent<DebrisVisuals*>();
