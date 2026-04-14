@@ -411,11 +411,11 @@ UnityEngine::Transform* CustomModels::PreviewNotes(UnityEngine::Vector3 position
         auto parent = GetDefaultNotes()->transform;
         parent->SetParent(preview, false);
 
-        for (auto noteController : parent->GetComponentsInChildren<GlobalNamespace::NoteController*>()) {
-            UnityEngine::Object::DestroyImmediate(noteController);
-        }
-
         ColorDefaultNotes(parent, MenuLeftColor(), MenuRightColor());
+    }
+
+    for (auto noteController : preview->GetComponentsInChildren<GlobalNamespace::NoteController*>()) {
+        UnityEngine::Object::DestroyImmediate(noteController);
     }
 
     RemoveLoadingGuard();
